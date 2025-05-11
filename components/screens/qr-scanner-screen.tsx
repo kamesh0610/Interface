@@ -2,14 +2,14 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { ArrowLeft, Camera, Loader2, QrCode } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { toast } from "@/components/ui/use-toast"
 import { Toaster } from "@/components/ui/toaster"
+import { toast } from "@/components/ui/use-toast"
+import { ArrowLeft, Camera, Loader2, QrCode } from "lucide-react"
 import dynamic from "next/dynamic"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 
 // Import the HTML5 QR code scanner which is more reliable
 const Html5QrcodePlugin = dynamic(() => import("./html5-qrcode-plugin"), {
@@ -67,8 +67,8 @@ export default function QrScannerScreen() {
       
 
       // Otherwise, make the actual API call
-      console.log("Making API request to:", `http://localhost:5000/get-prescription`)
-      const response = await fetch(`http://localhost:5000/get-prescription`, {
+      console.log("Making API request to:", `https://hardware-backend-psi.vercel.app/get-prescription`)
+      const response = await fetch(`https://hardware-backend-psi.vercel.app/get-prescription`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
