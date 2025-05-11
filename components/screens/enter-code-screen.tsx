@@ -29,7 +29,7 @@ export default function EnterCodeScreen() {
     try {
       console.log("Sending patientId:", codeId)
 
-      const response = await fetch("http://192.168.65.238:5000/get-prescription", {
+      const response = await fetch("https://hardware-backend-psi.vercel.app/get-prescription", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

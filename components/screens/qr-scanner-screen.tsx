@@ -17,7 +17,7 @@ const Html5QrcodePlugin = dynamic(() => import("./html5-qrcode-plugin"), {
 })
 
 // API endpoint configuration - can be changed based on environment
-const API_ENDPOINT = process.env.NEXT_PUBLIC_API_ENDPOINT || "http://192.168.65.238:5000/get-prescriptions"
+const API_ENDPOINT = process.env.NEXT_PUBLIC_API_ENDPOINT || "https://hardware-backend-psi.vercel.app/get-prescriptions"
 
 // Mock prescription data for preview/development
 
