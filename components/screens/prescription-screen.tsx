@@ -1,14 +1,15 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { ArrowLeft, User, Calendar, Phone, Pill, Trash2, Plus, Minus, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { toast } from "@/components/ui/use-toast"
 import { Toaster } from "@/components/ui/toaster"
+import { toast } from "@/components/ui/use-toast"
+import { ArrowLeft, ArrowRight, Calendar, Minus, Phone, Pill, Plus, Trash2, User } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 
 interface Medicine {
+  id: string
   name: string
   routine: string[]
   timing: string
@@ -30,7 +31,6 @@ export default function PrescriptionScreen() {
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    // Get prescription data from sessionStorage
     const storedPrescription = sessionStorage.getItem("prescription")
 
     if (!storedPrescription) {
@@ -44,9 +44,9 @@ export default function PrescriptionScreen() {
     }
 
     try {
-      const parsedPrescription = JSON.parse(storedPrescription) as Prescription
-      setPrescription(parsedPrescription)
-      setMedicines([...parsedPrescription.medicines])
+      const parsedPrescription = JSON.parse(storedPrescription)
+      setPrescription(parsedPrescription.prescription)
+      setMedicines(parsedPrescription.prescription.medicines)
     } catch (error) {
       console.error("Error parsing prescription:", error)
       toast({
@@ -57,7 +57,6 @@ export default function PrescriptionScreen() {
       router.push("/")
     }
   }, [router])
-
   const handleRemoveMedicine = (index: number) => {
     setMedicines((prev) => prev.filter((_, i) => i !== index))
   }
@@ -69,21 +68,18 @@ export default function PrescriptionScreen() {
           return { ...med, noOfTablets: med.noOfTablets - 1 }
         }
         return med
-      }),
+      })
     )
   }
 
   const handleProceed = () => {
-    // Save modified medicines to sessionStorage
     if (prescription) {
       const updatedPrescription = { ...prescription, medicines }
       sessionStorage.setItem("prescription", JSON.stringify(updatedPrescription))
 
-      // Calculate total cost (simple calculation for demo)
       const totalCost = medicines.reduce((sum, med) => sum + med.noOfTablets * 5, 0)
       sessionStorage.setItem("totalCost", totalCost.toString())
 
-      // Navigate to payment screen
       router.push("/payment")
     }
   }
@@ -98,7 +94,6 @@ export default function PrescriptionScreen() {
       </div>
     )
   }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-indigo-800 to-blue-800 text-white px-4 py-8 relative">
       <Toaster />
@@ -153,6 +148,7 @@ export default function PrescriptionScreen() {
           </Card>
         ) : (
           medicines.map((medicine, index) => (
+            
             <Card key={index} className="bg-white/10 backdrop-blur-md border-white/20 shadow-xl mb-4">
               <CardContent className="p-6">
                 <div className="flex justify-between items-start">
@@ -163,7 +159,7 @@ export default function PrescriptionScreen() {
                     </div>
 
                     <div className="text-sm text-white/70">
-                      <p>Routine: {medicine.routine.join(", ")}</p>
+                      <p>Routine: {medicine.routine}</p>
                       <p>Timing: {medicine.timing}</p>
                     </div>
 

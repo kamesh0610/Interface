@@ -1,16 +1,16 @@
 "use client"
 
-import type React from "react"
-
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { ArrowLeft, CreditCard, CheckCircle, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent } from "@/components/ui/card"
-import { toast } from "@/components/ui/use-toast"
 import { Toaster } from "@/components/ui/toaster"
+import { toast } from "@/components/ui/use-toast"
+import { AlertCircle, ArrowLeft, CheckCircle, CreditCard } from "lucide-react"
+import { useRouter } from "next/navigation"
+import type React from "react"
+import { useEffect, useState } from "react"
+import DispensingScreen from "./dispensing-screen"
 
 export default function PaymentScreen() {
   const router = useRouter()
@@ -21,11 +21,10 @@ export default function PaymentScreen() {
   const [cvv, setCvv] = useState("")
   const [isProcessing, setIsProcessing] = useState(false)
   const [paymentStatus, setPaymentStatus] = useState<"idle" | "processing" | "success" | "error">("idle")
-
+  const [isDispensing, setIsDispensing] = useState(false);
+  // const searchParams = useSearchParams()
   useEffect(() => {
-    // Get total cost from sessionStorage
     const cost = sessionStorage.getItem("totalCost")
-
     if (!cost) {
       toast({
         variant: "destructive",
@@ -35,12 +34,10 @@ export default function PaymentScreen() {
       router.push("/")
       return
     }
-
     setTotalCost(Number.parseFloat(cost))
   }, [router])
 
   const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Format card number with spaces every 4 digits
     const value = e.target.value.replace(/\s/g, "")
     if (/^\d*$/.test(value) && value.length <= 16) {
       const formatted = value.replace(/(\d{4})(?=\d)/g, "$1 ").trim()
@@ -49,7 +46,6 @@ export default function PaymentScreen() {
   }
 
   const handleExpiryDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Format expiry date as MM/YY
     const value = e.target.value.replace(/\D/g, "")
     if (value.length <= 4) {
       let formatted = value
@@ -61,68 +57,98 @@ export default function PaymentScreen() {
   }
 
   const handleCvvChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Only allow 3 or 4 digits for CVV
     const value = e.target.value.replace(/\D/g, "")
     if (value.length <= 4) {
       setCvv(value)
     }
   }
 
+  const sendSignalToArduino = async () => {
+    try {
+      const patientId = sessionStorage.getItem("patientId")
+      console.log("pat", patientId)
+      setIsDispensing(true);
+      const response = await fetch("https://4fd4-2409-4091-a000-4602-20c6-1107-180-2e59.ngrok-free.app/send-to-arduino", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ patientId }),
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to communicate with dispenser.")
+      }
+
+      console.log("Signal sent to Arduino")
+    } catch (error) {
+      console.error("Error sending signal to Arduino:", error)
+      toast({
+        variant: "destructive",
+        title: "Hardware Error",
+        description: "Failed to contact dispenser. Please check the connection.",
+      })
+    }
+    finally{
+      setIsDispensing(false);
+    }
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
-    // Basic validation
     if (cardNumber.replace(/\s/g, "").length !== 16) {
-      toast({
-        variant: "destructive",
-        title: "Invalid Card Number",
-        description: "Please enter a valid 16-digit card number.",
-      })
+      toast({ variant: "destructive", title: "Invalid Card Number", description: "Enter a valid 16-digit card number." })
       return
     }
 
     if (!cardName.trim()) {
-      toast({
-        variant: "destructive",
-        title: "Invalid Name",
-        description: "Please enter the cardholder name.",
-      })
+      toast({ variant: "destructive", title: "Invalid Name", description: "Enter the cardholder name." })
       return
     }
 
     if (!/^\d{2}\/\d{2}$/.test(expiryDate)) {
-      toast({
-        variant: "destructive",
-        title: "Invalid Expiry Date",
-        description: "Please enter a valid expiry date (MM/YY).",
-      })
+      toast({ variant: "destructive", title: "Invalid Expiry Date", description: "Use MM/YY format." })
       return
     }
 
     if (cvv.length < 3) {
-      toast({
-        variant: "destructive",
-        title: "Invalid CVV",
-        description: "Please enter a valid CVV code.",
-      })
+      toast({ variant: "destructive", title: "Invalid CVV", description: "Enter a valid CVV code." })
       return
     }
 
-    // Process payment (simulated)
     setPaymentStatus("processing")
     setIsProcessing(true)
 
-    // Simulate payment processing
-    setTimeout(() => {
-      setPaymentStatus("success")
+   const delay = (ms:number) => new Promise((resolve) => setTimeout(resolve, ms))
 
-      // Navigate to dispensing screen after successful payment
-      setTimeout(() => {
-        router.push("/dispensing")
-      }, 1500)
-    }, 2000)
+  setTimeout(async () => {
+    setPaymentStatus("success")
+
+    // ✅ Wait before redirecting to loading
+    await delay(1500)
+    console.log("Redirect to loading")
+
+    // ✅ Send signal to Arduino after successful payment
+    await sendSignalToArduino()
+
+    // ✅ Wait again before clearing session and redirecting
+    // setTimeout(() => {
+      
+    // }, 1500)
+    sessionStorage.clear()
+    router.push("/")
+
+  }, 2000)
+
   }
-
+  if(isDispensing){
+    return (
+      <div>
+        <DispensingScreen /> 
+      </div>
+    )
+  }
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-indigo-800 to-blue-800 text-white px-4 py-8 relative">
       <Toaster />

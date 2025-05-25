@@ -14,7 +14,9 @@ export default function EnterCodeScreen() {
   const [codeId, setCodeId] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
+ 
 
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
@@ -28,13 +30,17 @@ export default function EnterCodeScreen() {
 
     try {
       console.log("Sending patientId:", codeId)
+      sessionStorage.setItem("patientId", codeId)
 
-      const response = await fetch("https://hardware-backend-psi.vercel.app/get-prescription", {
+    // Navigate to payment
+    // router.push("/pay")
+      const response = await fetch("https://4fd4-2409-4091-a000-4602-20c6-1107-180-2e59.ngrok-free.app/get-prescription", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ patientId: codeId }),
+        
       })
 
       if (!response.ok) {

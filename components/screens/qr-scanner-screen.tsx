@@ -17,7 +17,7 @@ const Html5QrcodePlugin = dynamic(() => import("./html5-qrcode-plugin"), {
 })
 
 // API endpoint configuration - can be changed based on environment
-const API_ENDPOINT = process.env.NEXT_PUBLIC_API_ENDPOINT || "https://hardware-backend-psi.vercel.app/get-prescriptions"
+const API_ENDPOINT = process.env.NEXT_PUBLIC_API_ENDPOINT || "https://4fd4-2409-4091-a000-4602-20c6-1107-180-2e59.ngrok-free.app/get-prescriptions"
 
 // Mock prescription data for preview/development
 
@@ -64,11 +64,14 @@ export default function QrScannerScreen() {
   const processPrescription = async (codeId: string) => {
     try {
       // If in preview mode, use mock data
-      
+      sessionStorage.setItem("patientId", codeId)
+
+    // Navigate to payment
+    router.push("/pay")
 
       // Otherwise, make the actual API call
-      console.log("Making API request to:", `https://hardware-backend-psi.vercel.app/get-prescription`)
-      const response = await fetch(`https://hardware-backend-psi.vercel.app/get-prescription`, {
+      console.log("Making API request to:", `https://fcd9-2409-4091-a000-4602-20c6-1107-180-2e59.ngrok-free.app/get-prescription`)
+      const response = await fetch(`https://fcd9-2409-4091-a000-4602-20c6-1107-180-2e59.ngrok-free.app/get-prescription`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
