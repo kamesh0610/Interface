@@ -17,7 +17,7 @@ const Html5QrcodePlugin = dynamic(() => import("./html5-qrcode-plugin"), {
 })
 
 // API endpoint configuration - can be changed based on environment
-const API_ENDPOINT = process.env.NEXT_PUBLIC_API_ENDPOINT || "https://4fd4-2409-4091-a000-4602-20c6-1107-180-2e59.ngrok-free.app/get-prescriptions"
+const API_ENDPOINT = process.env.NEXT_PUBLIC_API_ENDPOINT || "https://fa79-2409-4091-a000-4402-6431-3aa8-43cf-3b49.ngrok-free.app/get-prescriptions"
 
 // Mock prescription data for preview/development
 
@@ -70,8 +70,8 @@ export default function QrScannerScreen() {
     router.push("/pay")
 
       // Otherwise, make the actual API call
-      console.log("Making API request to:", `https://fcd9-2409-4091-a000-4602-20c6-1107-180-2e59.ngrok-free.app/get-prescription`)
-      const response = await fetch(`https://fcd9-2409-4091-a000-4602-20c6-1107-180-2e59.ngrok-free.app/get-prescription`, {
+      console.log("Making API request to:", `https://fa79-2409-4091-a000-4402-6431-3aa8-43cf-3b49.ngrok-free.app/get-prescription`)
+      const response = await fetch(`https://fa79-2409-4091-a000-4402-6431-3aa8-43cf-3b49.ngrok-free.app/get-prescription`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

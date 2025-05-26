@@ -68,7 +68,7 @@ export default function PaymentScreen() {
       const patientId = sessionStorage.getItem("patientId")
       console.log("pat", patientId)
       setIsDispensing(true);
-      const response = await fetch("https://4fd4-2409-4091-a000-4602-20c6-1107-180-2e59.ngrok-free.app/send-to-arduino", {
+      const response = await fetch("https://fa79-2409-4091-a000-4402-6431-3aa8-43cf-3b49.ngrok-free.app/send-to-arduino", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

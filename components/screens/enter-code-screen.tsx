@@ -34,7 +34,7 @@ export default function EnterCodeScreen() {
 
     // Navigate to payment
     // router.push("/pay")
-      const response = await fetch("https://4fd4-2409-4091-a000-4602-20c6-1107-180-2e59.ngrok-free.app/get-prescription", {
+      const response = await fetch("https://fa79-2409-4091-a000-4402-6431-3aa8-43cf-3b49.ngrok-free.app/get-prescription", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
